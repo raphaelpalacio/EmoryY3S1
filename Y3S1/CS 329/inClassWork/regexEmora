@@ -1,0 +1,109 @@
+# match()
+
+RE_MR = re.compile(r'(M[rs])(\.)')
+m = RE_MR.match('Ms. Wayne')
+print(m.groups())
+print(m.group())
+print(m.group(0))
+print(m.group(1))
+print(m.group(2))
+
+"""
+('Ms', '.')
+Ms.
+Ms.
+Ms
+.
+
+# output corresponding to the line
+"""
+RE_MR = re.compile(r'(M(?:[rs]|rs))(\.)') # This matches Mr and Ms but not Mrs
+
+
+# search()
+
+s1 = 'Mr. and Ms. Wayne are here'
+s2 = 'Here are Mr. and Mrs. Wayne'
+
+print(RE_MR.match(s1))
+print(RE_MR.match(s2))
+
+# findall() -> returns list of tuples
+
+print(RE_MR.findall(s1))
+print(RE_MR.findall(s2))
+# [('Mr', '.'), ('Ms', '.')]
+# [('Mr', '.'), ('Mrs', '.')]
+
+# finditer() -> return type is an iterator
+
+for m in RE_MR.finditer(s1):
+    print(m)
+
+# You can also use list comprehension for this
+ms = [m for m in RE_MR.finditer(s1)]
+print(ms)
+
+# Output ->
+# <re.Match object; span=(0, 3), match='Mr.'>
+# <re.Match object; span=(8, 11), match='Ms.'>
+
+# In class exercise
+#1 -> find the abreviation (Dr., U.S.A)
+RE_ABBR = re.compile(r'((?:Mr|Mrs|Ms|Dr)\.)|((?:[A-Z]\.){2,})')
+
+#2 -> find the apostrophe ('80, '90s, 'cause)
+RE_APOS = re.compile(r'\'(\d\ds?|cause)')
+
+#3 -> Concatenation (don't, gonna, cannot)
+RE_CONC = re.compile(r'([A-Za-z]+)(n\'t)|(gon)(na)|(can)(not)'
+
+#4 -> Hyperlink
+RE_HYPE = re.compile(r'(https?://\S+)')
+#5 Number -> 1/2, 123-456-7890
+RE_NUMB = re.compile(r'(\d+/\d+)|(\d{3}-\d{3}-\d{4})|(\d(?:,\d{3})+)')
+
+#6 Unit -> $10, 5kg
+RE_UNIT = re.compile(r'([$#])?(\d+)([km]g)?')
+
+
+# Natex Integration
+'{[{so, very} good], fantastic}' # Convert to regex
+r'((?:so|very) good|fantastic)'
+
+transitions = {
+    'state': 'start',
+    '`Hello. How are you?`': {
+        '/((?:so|very) good|fantastic)/': { # you need the backslash to signal for regex matching
+            '`Things are just getting better for you!`': 'end'
+        },
+        'error': {
+            '`Sorry, I didn\'t understand you.`': 'end'
+        }
+    }
+}
+
+transitions = {
+    'state': 'start',
+    '`Hello. How are you?`': {
+        '[/((?:so|very) good|fantastic)/]': { # This allows for partial matching
+            '`Things are just getting better for you!`': 'end'
+        },
+        'error': {
+            '`Sorry, I didn\'t understand you.`': 'end'
+        }
+    }
+}
+
+# Variable
+transitions = {
+    'state': 'start',
+    '`Hello. What should I call you?`': {
+        '[/(?<FIRSTNAME>[a-z]+) (?<LASTNAME>[a-z]+)/]': { # Stores matched results of regular expression to variables
+            '`It\'s nice to meet you,` $FIRSTNAME `. I know several people with the last name,` $LASTNAME': 'end'
+        },
+        'error': {
+            '`Sorry, I didn\'t understand you.`': 'end'
+        }
+    }
+}
